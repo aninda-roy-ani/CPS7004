@@ -1,6 +1,7 @@
 from week4.model.environment import Environment
 from week4.model.location import Location
 from week4.model.agent import Agent
+from week4.model.sardine import Sardine
 
 
 class Ocean(Environment):
@@ -38,13 +39,38 @@ class Ocean(Environment):
         ]
 
         for offset_x, offset_y in offsets:
-            col = (location.get_x() + offset_x) % self.get_width()
-            row = (location.get_y() + offset_y) % self.get_height()
-
-            if self.__grid[row][col] is None:
-                free_locations.append(Location(col, row))
+            col = (location.get_x() + offset_x)
+            row = (location.get_y() + offset_y)
+            try:
+                if self.__grid[row][col] is None:
+                    free_locations.append(Location(col, row))
+            except Exception as e:
+                # if self.__grid[location.get_y()][location.get_x()] is None:
+                #     free_locations.append(Location(location.get_x(), location.get_y()))
+                pass
 
         return free_locations
+
+    def sarine_locations(self, location):
+        sardine_locations = []
+
+        offsets = [
+            (-1, -1), (-1, 0), (-1, 1),
+            (0, -1), (0, 0), (0, 1),
+            (1, -1), (1, 0), (1, 1)
+        ]
+
+        for offset_x, offset_y in offsets:
+            col = location.get_x() + offset_x
+            row = location.get_y() + offset_y
+
+            try:
+                if self.__grid[row][col] is not None:
+                    sardine_locations.append(Location(col, row))
+            except Exception as e:
+                pass
+
+        return sardine_locations
 
 
 

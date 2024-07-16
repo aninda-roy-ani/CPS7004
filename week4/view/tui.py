@@ -1,4 +1,5 @@
 from week4.model.location import Location
+from week4.model.sardine import Sardine
 from week4.model.shark import Shark
 
 
@@ -13,4 +14,6 @@ class Tui:
                     print("~", end="")
                 elif isinstance(agent, Shark):
                     print("S", end="")
+                elif isinstance(agent, Sardine):
+                    print("F", end="")
             print()
