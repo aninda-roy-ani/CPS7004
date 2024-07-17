@@ -6,7 +6,7 @@ from week4.model.agent import Agent
 class Sardine(Agent):
 
     def __init__(self, location):
-        self.alive = 1
+        self.__alive = 1
         super().__init__(location)
 
     def __swim(self, ocean):
@@ -22,7 +22,7 @@ class Sardine(Agent):
         pass
 
     def act(self, ocean):
-        if self.alive == 1:
+        if self.__alive == 1:
             self.__swim(ocean)
 
     def remove(self):
