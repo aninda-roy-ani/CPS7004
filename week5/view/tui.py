@@ -1,4 +1,5 @@
 from week5.model.location import Location
+from week5.model.plankton import Plankton
 from week5.model.sardine import Sardine
 from week5.model.shark import Shark
 
@@ -16,4 +17,6 @@ class Tui:
                     print("S", end="")
                 elif isinstance(agent, Sardine):
                     print("F", end="")
+                elif isinstance(agent, Plankton):
+                    print("P", end="")
             print()

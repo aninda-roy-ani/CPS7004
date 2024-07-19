@@ -34,7 +34,7 @@ class Shark(Agent):
         if self.get_energy() >= MIN_SHARK_MOVE_ENERGY:
             current_location = self.get_location()
             free_locations = ocean.free_adjacent_locations(current_location)
-            if len(free_locations) > 0:
+            if len(free_locations) > 1:
                 index = random.randint(0, len(free_locations) - 1)
                 free_location = free_locations[index]
                 ocean.set_agent(None, current_location)
@@ -47,7 +47,7 @@ class Shark(Agent):
                 and self.get_energy() >= MIN_SHARK_REPRODUCE_ENERGY:
             current_location = self.get_location()
             free_locations = ocean.free_adjacent_locations(current_location)
-            if len(free_locations) > 0:
+            if len(free_locations) > 1:
                 index = random.randint(0, len(free_locations) - 1)
                 free_location = free_locations[index]
 

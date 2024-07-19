@@ -3,13 +3,15 @@ import random
 
 from week5.model.location import Location
 from week5.model.ocean import Ocean
+from week5.model.plankton import Plankton
 from week5.model.sardine import Sardine
 from week5.model.shark import Shark
 from week5.view.tui import Tui
 from week5.controller.config import (OCEAN_WIDTH,
                                      OCEAN_HEIGHT,
                                      SHARK_CREATION_PROBABILITY,
-                                     SARDINE_CREATION_PROBABILITY)
+                                     SARDINE_CREATION_PROBABILITY,
+                                     PLANKTON_CREATION_PROBABILITY)
 
 
 class Simulator:
@@ -34,6 +36,11 @@ class Simulator:
                     sardine = Sardine(sardine_location)
                     self.__ocean.set_agent(sardine, sardine_location)
                     self.__agents.append(sardine)
+                elif probability <= PLANKTON_CREATION_PROBABILITY:
+                    plank_location = Location(col, row)
+                    plankton = Plankton(plank_location)
+                    self.__ocean.set_agent(plankton, plank_location)
+                    self.__agents.append(plankton)
 
     def run(self):
         self.__tui.display_environment(self.__ocean)
@@ -46,7 +53,6 @@ class Simulator:
                     self.__agents.append(new_agent)
 
             # display updated environment
-            print()
             print()
             self.__tui.display_environment(self.__ocean)
 
