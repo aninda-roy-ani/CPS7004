@@ -26,4 +26,4 @@ class Sardine(Agent):
             self.__swim(ocean)
 
     def remove(self):
-        self.alive = 0
+        self.__alive = 0
