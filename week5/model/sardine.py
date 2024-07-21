@@ -1,7 +1,10 @@
 import random
 
-from week5.controller.config import MAX_SARDINE_ENERGY, MIN_SARDINE_MOVE_ENERGY, SARDINE_REPRODUCTION_PROBABILITY, \
-    MIN_SARDINE_REPRODUCE_ENERGY
+from week5.controller.config import (MAX_SARDINE_ENERGY,
+                                     MIN_SARDINE_MOVE_ENERGY,
+                                     SARDINE_REPRODUCTION_PROBABILITY,
+                                     MIN_SARDINE_REPRODUCE_ENERGY,
+                                     MAX_SARDINE_AGE)
 from week5.model.agent import Agent
 from week5.model.plankton import Plankton
 
@@ -9,7 +12,7 @@ from week5.model.plankton import Plankton
 class Sardine(Agent):
 
     def __init__(self, location):
-        super().__init__(location, MAX_SARDINE_ENERGY)
+        super().__init__(location, MAX_SARDINE_ENERGY, 0)
 
     def __eat(self, ocean):
         if self.get_energy() < MAX_SARDINE_ENERGY:
@@ -51,11 +54,16 @@ class Sardine(Agent):
 
                 baby_sardine = Sardine(free_location)
                 ocean.set_agent(baby_sardine, free_location)
+                self.set_energy(self.get_energy() - MIN_SARDINE_REPRODUCE_ENERGY)
                 return baby_sardine
         return None
 
     def act(self, ocean):
-
+        if self.get_age() >= MAX_SARDINE_AGE:
+            self.set_energy(0)
+            ocean.set_agent(None, self.get_location())
+            return None
+        self.set_age(self.get_age() + 1)
         self.__eat(ocean)
         self.__swim(ocean)
         return self.__reproduce(ocean)

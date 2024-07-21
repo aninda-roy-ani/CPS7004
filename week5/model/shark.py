@@ -5,13 +5,14 @@ from week5.model.sardine import Sardine
 from week5.controller.config import (MAX_SHARK_ENERGY,
                                      MIN_SHARK_MOVE_ENERGY,
                                      MIN_SHARK_REPRODUCE_ENERGY,
-                                     SHARK_REPRODUCTION_PROBABILITY)
+                                     SHARK_REPRODUCTION_PROBABILITY,
+                                     MAX_SHARK_AGE)
 
 
 class Shark(Agent):
 
     def __init__(self, location):
-        super().__init__(location, MAX_SHARK_ENERGY)
+        super().__init__(location, MAX_SHARK_ENERGY, 0)
 
     def __eat(self, ocean):
         if self.get_energy() < MAX_SHARK_ENERGY:
@@ -53,11 +54,16 @@ class Shark(Agent):
 
                 baby_shark = Shark(free_location)
                 ocean.set_agent(baby_shark, free_location)
+                self.set_energy(self.get_energy() - MIN_SHARK_REPRODUCE_ENERGY)
                 return baby_shark
         return None
 
     def act(self, ocean):
-
+        if self.get_age() >= MAX_SHARK_AGE:
+            ocean.set_agent(None, self.get_location())
+            self.set_energy(0)
+            return None
+        self.set_age(self.get_age() + 1)
         self.__eat(ocean)
         self.__swim(ocean)
         return self.__reproduce(ocean)
