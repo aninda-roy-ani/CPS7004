@@ -10,6 +10,7 @@ tree = {
     #'7': '6'
 }
 
+
 def dfs(tree, start):
 
     q = [start]
