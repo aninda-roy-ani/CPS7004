@@ -36,34 +36,28 @@ def calculate_bow_matrix(pre_processed_reviews, labels):
 
     # Fit and transform the reviews to create BoW matrices
     positive_bow_matrix = vectorizer.fit_transform(positive_reviews)
-    negative_bow_matrix = vectorizer.fit_transform(negative_reviews)
+    negative_bow_matrix = vectorizer.transform(negative_reviews)
 
     return positive_bow_matrix, negative_bow_matrix
 
 
-def predict_sentiment(new_reviews, positive_bow_df, negative_bow_df):
-    # Pre-process new reviews
-    new_reviews_processed = [pre_processed_reviews(review) for review in new_reviews]
+# Define a function to predict sentiment
+def predict_sentiment(new_reviews, positive_bow_matrix, negative_bow_matrix):
+    # Pre-process and transform the new reviews
+    pre_processed_new_reviews = [pre_process_review(review) for review in new_reviews]
+    new_reviews_bow_matrix = vectorizer.transform(pre_processed_new_reviews)
 
-    # Transform the new reviews to BoW representation
-    new_reviews_bow = vectorizer.transform(new_reviews_processed)
+    # Compute cosine similarity between new reviews and the BoW matrices
+    positive_similarity = cosine_similarity(new_reviews_bow_matrix, positive_bow_matrix)
+    negative_similarity = cosine_similarity(new_reviews_bow_matrix, negative_bow_matrix)
 
-    # Calculate cosine similarity
-    positive_similarity = cosine_similarity(new_reviews_bow, positive_bow_df)
-    negative_similarity = cosine_similarity(new_reviews_bow, negative_bow_df)
-
+    # Predict sentiment based on higher similarity
     predictions = []
-
-    for i in range(len(new_reviews_bow)):
-        new_review_vector = new_reviews_bow[i]
-
-        # Predict sentiment based on highest similarity
+    for i in range(len(new_reviews)):
         if positive_similarity[i].mean() > negative_similarity[i].mean():
-            predictions.append("positive")
-        elif positive_similarity[i].mean() < negative_similarity[i].mean():
-            predictions.append("negative")
+            predictions.append('positive')
         else:
-            predictions.append("neutral")
+            predictions.append('negative')
 
     return predictions
 
@@ -82,26 +76,36 @@ if __name__ == '__main__':
     pre_processed_reviews = df['review'].apply(lambda x: pre_process_review(x))
 
     # Display processed data
-    print(f"Pre-Processed Reviews:\n{pre_processed_reviews}\n")
+    print("Pre-Processed Reviews:")
+    print(pre_processed_reviews)
 
     # Retrieve the 'sentiment' column with 'positive' or 'negative' labels
     labels = df['sentiment']
 
-    # Initialise a CountVectorizer
+    # Initialize a CountVectorizer
     vectorizer = CountVectorizer()
 
     # Calculate the BoW matrices
     positive_bow_matrix, negative_bow_matrix = calculate_bow_matrix(pre_processed_reviews, labels)
 
     # Display the matrices
-    print(f"Positive BoW Matrix:\n{positive_bow_matrix.toarray()}\n")
-    print(f"Negative BoW Matrix:\n{negative_bow_matrix.toarray()}\n")
+    print("Positive BoW Matrix:")
+    print(positive_bow_matrix.toarray())
 
-    data = pd.read_csv('new_review.csv')
+    print("Negative BoW Matrix:")
+    print(negative_bow_matrix.toarray())
 
-    predictions = predict_sentiment(data['review'], positive_bow_matrix, negative_bow_matrix)
+    # Load new reviews
+    new_reviews = pd.read_csv('new_review.csv')
 
-    # Display predictions
-    print("\nPredicted Sentiments:")
-    for review, sentiment in zip(data['review'], predictions):
-        print(f"Review: {review}\nPredicted Sentiment: {sentiment}\n")
+    # Predict the sentiment of the new reviews
+    predictions = predict_sentiment(new_reviews['review'], positive_bow_matrix, negative_bow_matrix)
+
+    # Display the predictions
+    print("Predictions:")
+    print("_" * len('Predictions'))
+
+    for review, sentiment in zip(new_reviews['review'], predictions):
+        print("Review:", review)
+        print("Predicted Sentiment:", sentiment)
+        print()
